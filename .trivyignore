@@ -37,3 +37,20 @@ CVE-2026-48962
 
 # perl-base, HIGH - Debian: "postponed, minor issue"
 CVE-2026-9538
+
+# --- Alpine (3 Java services, eclipse-temurin:*-jre-alpine) ---
+# Unlike the Debian entries above, these are NOT expected to stay
+# unfixed long-term: Alpine 3.23 is actively supported and the fix
+# already exists upstream (p11-kit 0.26.2-r0). The eclipse-temurin
+# image just hasn't been rebuilt yet to pick it up (still on the
+# 2026-06-22 build as of 2026-07-07). Jib cannot run "apk upgrade"
+# during the image build (no RUN-equivalent step, by design), so
+# there is no way to apply this patch ourselves without switching
+# away from Jib. Remove this entry once
+# `docker buildx imagetools inspect eclipse-temurin:17-jre-alpine`
+# shows a newer build date than 2026-06-22.
+
+# p11-kit / p11-kit-trust, HIGH - fix (0.26.2-r0) not yet in the
+# pinned eclipse-temurin build; not used at runtime by this app
+# (PKCS#11 hardware token middleware, no hardware tokens involved)
+CVE-2026-2100
