@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// CI test: trivial comment to trigger the balancereader workflow (paths filter).
 package anthos.samples.bankofanthos.balancereader;
 
 import com.google.cloud.MetadataConfig;
