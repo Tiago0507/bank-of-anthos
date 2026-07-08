@@ -19,3 +19,4 @@ jobs:
     with:
       service_name: transactionhistory
       module_path: src/ledger/transactionhistory
+      manifest_file: transaction-history.yaml

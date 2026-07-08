@@ -21,3 +21,4 @@ jobs:
       service_path: src/frontend
       run_lint: true
       run_tests: false
+      manifest_file: frontend.yaml

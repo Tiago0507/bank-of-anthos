@@ -24,6 +24,10 @@ on:
         required: false
         type: boolean
         default: false
+      manifest_file:
+        description: Filename of this service's manifest in bank-of-anthos-gitops (kubernetes-manifests/<manifest_file>). Not always the same as service_name (e.g. balancereader -> balance-reader.yaml).
+        required: true
+        type: string
 
 # id-token: write is required for the OIDC (OpenID Connect) exchange with
 # AWS; contents: read is the default checkout permission. Harmless on a
@@ -107,3 +111,46 @@ jobs:
           ECR_IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ inputs.service_name }}:${{ github.sha }}"
           docker tag "ci-${{ inputs.service_name }}:${{ github.sha }}" "$ECR_IMAGE"
           docker push "$ECR_IMAGE"
+
+      # Short-lived (~1h) token scoped only to bank-of-anthos-gitops,
+      # exchanged at runtime from the GitHub App's private key. Nothing
+      # static or long-lived is stored for this write access.
+      - name: Generate GitOps App token
+        if: github.event_name == 'push'
+        id: gitops-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.GITOPS_APP_ID }}
+          private-key: ${{ secrets.GITOPS_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: bank-of-anthos-gitops
+
+      # A second, independent checkout in the same job, into its own
+      # subdirectory (path: gitops) so it never mixes with the
+      # bank-of-anthos checkout already at the workspace root.
+      - name: Checkout GitOps repo
+        if: github.event_name == 'push'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/bank-of-anthos-gitops
+          token: ${{ steps.gitops-token.outputs.token }}
+          path: gitops
+
+      # Rewrites only the tag portion of the image reference, whatever it
+      # was before (":latest" or a previous commit SHA). The diff --cached
+      # --quiet guard skips the commit/push if this exact tag was already
+      # written (e.g. a re-run), instead of failing on an empty commit.
+      - name: Update image tag in GitOps repo
+        if: github.event_name == 'push'
+        working-directory: gitops
+        run: |
+          sed -i -E "s|(/${{ inputs.service_name }}):[^[:space:]]+|\1:${{ github.sha }}|" "kubernetes-manifests/${{ inputs.manifest_file }}"
+          git config user.name "bank-of-anthos-gitops-writer[bot]"
+          git config user.email "bank-of-anthos-gitops-writer[bot]@users.noreply.github.com"
+          git add "kubernetes-manifests/${{ inputs.manifest_file }}"
+          if git diff --cached --quiet; then
+            echo "No change to commit (image tag already up to date)."
+          else
+            git commit -m "chore: update ${{ inputs.service_name }} image to ${{ github.sha }}"
+            git push
+          fi
