@@ -14,6 +14,7 @@
 
 """Web service for frontend
 """
+# CI test: trivial comment to trigger the frontend workflow (gitops tag update).
 
 # Module imports
 import concurrent.futures
