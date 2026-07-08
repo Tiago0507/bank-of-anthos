@@ -16,6 +16,7 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/_docker-build-push.yml
+    secrets: inherit
     with:
       service_name: frontend
       service_path: src/frontend

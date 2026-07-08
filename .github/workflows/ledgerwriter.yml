@@ -16,6 +16,7 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/_jib-build-push.yml
+    secrets: inherit
     with:
       service_name: ledgerwriter
       module_path: src/ledger/ledgerwriter
