@@ -21,3 +21,4 @@ jobs:
       service_path: src/loadgenerator
       run_lint: false
       run_tests: false
+      manifest_file: loadgenerator.yaml

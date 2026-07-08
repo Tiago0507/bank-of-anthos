@@ -21,3 +21,4 @@ jobs:
       service_path: src/accounts/userservice
       run_lint: true
       run_tests: true
+      manifest_file: userservice.yaml

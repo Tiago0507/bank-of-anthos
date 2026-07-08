@@ -19,3 +19,4 @@ jobs:
     with:
       service_name: balancereader
       module_path: src/ledger/balancereader
+      manifest_file: balance-reader.yaml
