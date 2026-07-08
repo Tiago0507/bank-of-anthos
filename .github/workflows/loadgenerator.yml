@@ -16,6 +16,7 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/_docker-build-push.yml
+    secrets: inherit
     with:
       service_name: loadgenerator
       service_path: src/loadgenerator
