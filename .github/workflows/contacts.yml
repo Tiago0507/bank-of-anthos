@@ -22,4 +22,3 @@ jobs:
       service_path: src/accounts/contacts
       run_lint: true
       run_tests: true
-      manifest_file: contacts.yaml

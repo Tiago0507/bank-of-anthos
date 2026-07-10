@@ -22,4 +22,3 @@ jobs:
       service_path: src/accounts/accounts-db
       run_lint: false
       run_tests: false
-      manifest_file: accounts-db.yaml

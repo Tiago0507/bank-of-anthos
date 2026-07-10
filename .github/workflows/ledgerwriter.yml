@@ -20,4 +20,3 @@ jobs:
     with:
       service_name: ledgerwriter
       module_path: src/ledger/ledgerwriter
-      manifest_file: ledger-writer.yaml
