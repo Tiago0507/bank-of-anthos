@@ -22,4 +22,3 @@ jobs:
       service_path: src/ledger/ledger-db
       run_lint: false
       run_tests: false
-      manifest_file: ledger-db.yaml
